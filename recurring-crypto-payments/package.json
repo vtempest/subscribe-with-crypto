@@ -9,6 +9,8 @@
   "scripts": {
     "dev:dashboard": "pnpm --filter dashboard start",
     "dev:checkout": "pnpm --filter checkout start",
+    "demo:dashboard": "pnpm --filter dashboard demo",
+    "demo:checkout": "pnpm --filter checkout demo",
     "dev:server": "pnpm --filter server dev",
     "build:dashboard": "pnpm --filter dashboard build",
     "build:checkout": "pnpm --filter checkout build",

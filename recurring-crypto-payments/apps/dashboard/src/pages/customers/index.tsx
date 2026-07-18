@@ -8,6 +8,9 @@ import type { VendorClient } from '@core/types/VendorClient';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { apiGetCustomers } from '@dashboard/api/customers/get-customers';
 import { handleApiError } from '@core/utils';
+import { customersMockData } from '@core/mock-data';
+
+const IS_DEMO = process.env.REACT_APP_DEMO === 'true';
 
 const columns: GridColDef<VendorClient>[] = [
   {
@@ -47,10 +50,14 @@ const Customers = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (IS_DEMO) {
+      setRows(customersMockData);
+      setIsLoading(false);
+      return;
+    }
     const getData = async () => {
       try {
         const { data } = await apiGetCustomers();
-
         setRows(data);
         setIsLoading(false);
       } catch (err) {

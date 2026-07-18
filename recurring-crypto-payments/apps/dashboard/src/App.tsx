@@ -40,7 +40,14 @@ function App() {
 
           <Route path="/login" element={<Login />} />
           <Route path="/page-not-found" element={<NotFound />} />
-          <Route path="/" element={<Navigate to="/login" />} />
+          <Route
+            path="/"
+            element={
+              <Navigate
+                to={process.env.REACT_APP_DEMO === 'true' ? '/dashboard' : '/login'}
+              />
+            }
+          />
 
           <Route path="*" element={<Navigate to="/page-not-found" />} />
         </Routes>

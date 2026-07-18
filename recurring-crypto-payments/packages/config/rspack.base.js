@@ -61,6 +61,7 @@ module.exports = ({
         process.env.REACT_APP_API_URL,
       ),
       'process.env.REACT_APP_ENV': JSON.stringify(process.env.REACT_APP_ENV),
+      'process.env.REACT_APP_DEMO': JSON.stringify(process.env.DEMO_MODE || ''),
     }),
     new ProgressPlugin(),
   ],
@@ -81,7 +82,7 @@ module.exports = ({
   },
   devServer: {
     hot: true,
-    host: `${subdomain}.denliehoo.localhost`,
+    host: process.env.DEMO_MODE ? 'localhost' : `${subdomain}.denliehoo.localhost`,
     port,
     allowedHosts: 'all', // Allow custom domain in dev
     historyApiFallback: true,

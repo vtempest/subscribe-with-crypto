@@ -15,6 +15,9 @@ import { renderAmount, renderDate } from '../../utils/renderTableCell';
 import type { Payout, Vendor } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { apiGetPayouts } from '@dashboard/api/payouts/get-payouts';
+import { payoutsMockData } from '@core/mock-data';
+
+const IS_DEMO = process.env.REACT_APP_DEMO === 'true';
 
 const columns: GridColDef<Payout>[] = [
   {
@@ -67,10 +70,18 @@ const Payouts = () => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <Intended to refetch data upon refresh. TODO: Find a different way to implement, maybe tanstack>
   useEffect(() => {
+    if (IS_DEMO) {
+      const { payouts, pendingBalance, owner, vendor } = payoutsMockData;
+      setOwner(owner);
+      setRows(payouts);
+      setPendingBalance(pendingBalance);
+      setVendorDetails(vendor);
+      setIsLoading(false);
+      return;
+    }
     const getDetails = async () => {
       try {
         const { data } = await apiGetPayouts();
-
         const { payouts, pendingBalance, owner, vendor } = data;
         setOwner(owner);
         setRows(payouts);

@@ -5,6 +5,9 @@ import ConfiguredIntergrations from './components/configured-integrations';
 import type { Vendor } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { apiGetVendorDetails } from '@dashboard/api/vendor/get-details';
+import { vendorMockData } from '@core/mock-data';
+
+const IS_DEMO = process.env.REACT_APP_DEMO === 'true';
 
 const Integrations = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -14,9 +17,14 @@ const Integrations = () => {
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
+    if (IS_DEMO) {
+      setVendor(vendorMockData);
+      setVendorId(vendorMockData._id);
+      setIsLoading(false);
+      return;
+    }
     const getAndSetVendorDetails = async () => {
       const { data } = await apiGetVendorDetails();
-
       const {
         name,
         email,

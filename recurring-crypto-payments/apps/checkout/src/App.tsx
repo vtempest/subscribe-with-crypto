@@ -4,6 +4,13 @@ import CheckoutPage from './pages/checkout-page';
 import { createTheme } from '@mui/material/styles';
 import { useSubcriptionDetail } from './store';
 import { apiGetSubscriptionDetails } from './api/get-subscription-details';
+import {
+  activeSampleData,
+  cancelledSampleData,
+  inactiveSampleData,
+} from '@core/mock-data';
+
+const IS_DEMO = process.env.REACT_APP_DEMO === 'true';
 
 const defaultTheme = createTheme({
   components: {
@@ -28,19 +35,31 @@ const App = () => {
 
   const searchParams = new URLSearchParams(window.location.search);
   const encodedAuthToken = searchParams.get('authToken');
+  const demoStatus = searchParams.get('demo') || 'active';
 
   const authToken = encodedAuthToken?.replace(/~/g, '.');
-  localStorage.setItem('JWT', authToken || '');
+  if (!IS_DEMO) localStorage.setItem('JWT', authToken || '');
 
   const [isLoading, setIsLoading] = useState(true);
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: <refreshData required to refresh list>
   useEffect(() => {
+    if (IS_DEMO) {
+      const demoData =
+        demoStatus === 'cancelled'
+          ? cancelledSampleData
+          : demoStatus === 'inactive'
+            ? inactiveSampleData
+            : activeSampleData;
+      setDetails(demoData);
+      setIsLoading(false);
+      return;
+    }
+
     const getData = async () => {
       setIsLoading(true);
       try {
         const { data } = await apiGetSubscriptionDetails();
-
         setDetails(data);
         setIsLoading(false);
       } catch (err) {
@@ -52,18 +71,9 @@ const App = () => {
     if (authToken) {
       getData();
     }
-
-    // sample url: http://localhost:3032/?authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9~eyJ2ZW5kb3IiOiI2ODI0YTUyOTAzMWQ1ZGM2ZGM3NzkwOWYiLCJ2ZW5kb3JDbGllbnQiOiI2ODI0YTUyOTAzMWQ1ZGM2ZGM3NzkwYTEiLCJleHAiOjE3NDc3NTQ1NjUsImlhdCI6MTc0NzY2ODE2NX0~W5Ck1wmOr2iZy1tb1BcYWBGeKypO-8JivYXM-4vG9Cc
-    // simulate got this from call API
-    // const sampleData = activeSampleData;
-    // const sampleData = inactiveSampleData;
-    // const sampleData = cancelledSampleData;
-
-    // setDetails(sampleData);
-    // setIsLoading(false);
   }, [refreshData, authToken]);
 
-  const isShowLoader = isLoading || !details || !authToken;
+  const isShowLoader = isLoading || !details || (!IS_DEMO && !authToken);
 
   return (
     <ThemeProvider theme={defaultTheme}>

@@ -11,6 +11,9 @@ import type { DashboardApiResponse } from '@core/types';
 import PageLayout from '@dashboard/components/layout/page-layout';
 import { handleApiError } from '@core/utils';
 import { apiGetDashboard } from '@dashboard/api/dashboard/get-dashboard';
+import { dashboardMockData } from '@core/mock-data';
+
+const IS_DEMO = process.env.REACT_APP_DEMO === 'true';
 
 const Dashboard = () => {
   const [dashboard, setDashboard] = useState<DashboardApiResponse | undefined>(
@@ -28,6 +31,11 @@ const Dashboard = () => {
   } = dashboard || {};
 
   useEffect(() => {
+    if (IS_DEMO) {
+      setDashboard(dashboardMockData);
+      setIsLoading(false);
+      return;
+    }
     const clientTimezone = Math.abs(new Date().getTimezoneOffset() / 60);
     const getDashboard = async () => {
       try {
