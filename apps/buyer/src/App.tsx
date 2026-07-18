@@ -14,6 +14,8 @@ const theme = createTheme({
   },
 })
 
+const IS_DEMO = import.meta.env.VITE_DEMO === 'true'
+
 const App = () => {
   const setDetails = useSubscriptionStore((s) => s.setDetails)
   const refreshTick = useSubscriptionStore((s) => s.refreshTick)
@@ -24,25 +26,28 @@ const App = () => {
     ?.replace(/~/g, '.')
 
   useEffect(() => {
-    if (!authToken) { setLoading(false); return }
-    localStorage.setItem('JWT', authToken)
+    const effectiveToken = authToken ?? (IS_DEMO ? 'demo' : null)
+    if (!effectiveToken) { setLoading(false); return }
+    if (!IS_DEMO) localStorage.setItem('JWT', effectiveToken)
 
     const apiUrl = import.meta.env.VITE_API_URL ?? ''
     setLoading(true)
     fetch(`${apiUrl}/api/subscription`, {
-      headers: { Authorization: `Bearer ${authToken}` },
+      headers: { Authorization: `Bearer ${effectiveToken}` },
     })
       .then((r) => r.json())
       .then((data) => { setDetails(data); setLoading(false) })
       .catch(() => setLoading(false))
   }, [authToken, refreshTick])
 
+  const isReady = !loading && (!!authToken || IS_DEMO)
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <LoadingOverlay isLoading={loading} />
-      {!loading && authToken && <CheckoutPage />}
-      {!authToken && <div style={{ padding: 32 }}>Missing auth token.</div>}
+      {isReady && <CheckoutPage />}
+      {!IS_DEMO && !authToken && !loading && <div style={{ padding: 32 }}>Missing auth token.</div>}
     </ThemeProvider>
   )
 }

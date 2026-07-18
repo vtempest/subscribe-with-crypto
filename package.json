@@ -5,6 +5,8 @@
   "scripts": {
     "dev:buyer": "npm --workspace apps/buyer run dev",
     "dev:seller": "npm --workspace apps/seller run dev",
+    "demo:seller": "npm --workspace apps/seller run dev",
+    "demo:buyer": "npm --workspace apps/buyer run dev",
     "build": "npm --workspaces run build"
   }
 }
