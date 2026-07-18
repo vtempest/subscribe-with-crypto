@@ -1,0 +1,8 @@
+node_modules
+build
+.env
+.env.prod
+.env.dev
+dist
+pglite-debug.log
+.firebase

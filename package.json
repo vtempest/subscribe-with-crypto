@@ -1,0 +1,10 @@
+{
+  "name": "crypto-subscribe",
+  "private": true,
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "dev:buyer": "npm --workspace apps/buyer run dev",
+    "dev:seller": "npm --workspace apps/seller run dev",
+    "build": "npm --workspaces run build"
+  }
+}
